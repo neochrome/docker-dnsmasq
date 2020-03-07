@@ -1,0 +1,27 @@
+version: "3.5"
+
+services:
+
+  dns:
+    build:
+      context: "."
+    cap_add:
+      - NET_ADMIN
+    command: |
+      --log-facility=-
+      -q
+    extra_hosts:
+      one: 1.1.1.1
+      two: 2.2.2.2
+
+  test:
+    depends_on:
+      - 'dns'
+    image: 'alpine:3.11'
+    entrypoint: '/bin/sh -c'
+    command: |
+      "
+      nslookup one dns
+      nslookup two dns
+      nslookup example.com dns
+      "
